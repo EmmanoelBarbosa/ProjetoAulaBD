@@ -3,7 +3,7 @@ Projeto solicitado pelo Professor Daniel Brandão, em Python utilizando Flask.
 
 ## Grupo:
 - Emmanoel felipe de lima barbosa
-- Edson
+- Edson Gomes da Silva
 - Gustavo Augusto Ferreira de Lira
 
 ## Dependencias utilizadas para o projeto
