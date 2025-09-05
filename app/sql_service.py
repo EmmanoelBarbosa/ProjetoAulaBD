@@ -45,8 +45,8 @@ def atualizar_cliente(cliente_id, nome=None, email=None,
     return cliente
 
 # ----------------- PRODUTOS -----------------
-def criar_produto(nome, preco, descricao, categoria):
-    produto = Produto(nome=nome, preco=preco, descricao=descricao, categoria=categoria)
+def criar_produto(nome, preco, descricao, categoria, estoque):
+    produto = Produto(nome=nome, preco=preco, descricao=descricao, categoria=categoria, estoque=estoque)
     db.session.add(produto)
     db.session.commit()
     return produto
@@ -54,15 +54,17 @@ def criar_produto(nome, preco, descricao, categoria):
 def listar_produtos():
     return Produto.query.all()
 
-def atualizar_produto(id, nome=None, preco=None, estoque=None):
-    produto = Produto.query.get(id)
+def obter_produto(produto_id):
+    return Produto.query.get(produto_id)
+
+def atualizar_produto(produto_id, nome, preco, descricao, categoria, estoque):
+    produto = Produto.query.get(produto_id)
     if produto:
-        if nome:
-            produto.nome = nome
-        if preco:
-            produto.preco = preco
-        if estoque is not None:
-            produto.estoque = estoque
+        produto.nome = nome
+        produto.preco = preco
+        produto.descricao = descricao
+        produto.categoria = categoria
+        produto.estoque = estoque
         db.session.commit()
     return produto
 
@@ -74,13 +76,33 @@ def deletar_produto(id):
     return produto
 
 # ----------------- VENDAS -----------------
-def criar_venda(id_cliente, id_produto, valor_total):
+def criar_venda(id_cliente, id_produto, quantidade):
+    produto = Produto.query.get(id_produto)
+    if not produto or produto.estoque < quantidade:
+        return None  # Produto não existe ou não tem estoque
 
-    venda = Venda(id_cliente=id_cliente, id_produto=id_produto, valor_total=valor_total)
-    #produto.estoque -= quantidade  # baixa no estoque
+    valor_total = produto.preco * quantidade
+    venda = Venda(id_cliente=id_cliente, id_produto=id_produto, quantidade=quantidade, valor_total=valor_total)
+    produto.estoque -= quantidade  # Baixa no estoque
     db.session.add(venda)
     db.session.commit()
     return venda
 
 def listar_vendas():
     return Venda.query.all()
+
+def obter_venda(venda_id):
+    return Venda.query.get(venda_id)
+
+def deletar_venda(venda_id):
+    venda = Venda.query.get(venda_id)
+    if not venda:
+        return None
+
+    produto = Produto.query.get(venda.id_produto)
+    if produto:
+        produto.estoque += venda.quantidade  # Devolve ao estoque
+
+    db.session.delete(venda)
+    db.session.commit()
+    return venda
