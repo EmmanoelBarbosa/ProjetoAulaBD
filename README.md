@@ -1,10 +1,10 @@
 # ProjetoAulaBD
 projeto solicitado pelo Professor Daniel em Python flask
 
-grupo:
+Grupo:
 Emmanoel felipe de lima barbosa
 Edson
-Gustavo
+Gustavo Augusto Ferreira de Lira
 
 # Dependencias utilizadas para o projeto
 
